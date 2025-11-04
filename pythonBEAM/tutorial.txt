@@ -1,0 +1,6 @@
+Options → Other → Enable OutGauge Support (ou “OutGauge + MotionSim”, dependendo da versão).
+
+OutGauge Port: 4444 (padrão). 
+simrig.se
+
+Garanta que nenhum outro app (ex.: SimHub) esteja usando a mesma porta.

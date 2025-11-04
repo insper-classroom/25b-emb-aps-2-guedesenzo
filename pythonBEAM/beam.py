@@ -1,27 +1,29 @@
-from beamngpy import BeamNGpy, Scenario, Vehicle
-import time
+import socket, struct
 
-# Conecta ao BeamNG (precisa estar com o jogo aberto)
-bng = BeamNGpy('localhost', 64256)
-bng.open()
+# Porta do OutGauge definida nas opções do jogo
+PORT = 4444
 
-# Cria veículo e cenário simples
-vehicle = Vehicle('ego_vehicle', model='etk800', licence='GEARTEST')
-scenario = Scenario('smallgrid', 'gear_test')
-scenario.add_vehicle(vehicle, pos=(0, 0, 0), rot=(0, 0, 0))
-scenario.make(bng)
+# Formato básico do pacote OutGauge (parcial, suficiente pra pegar marcha)
+# ref: gear é um char onde: 0=R, 1=N, 2=1ª, 3=2ª, ...
+# Vamos ler só os primeiros campos relevantes.
+FMT = "<I4sHbbf"  # time, car[4], flags, gear(char), plid(char), speed(float)
+SIZE = struct.calcsize(FMT)
 
-bng.load_scenario(scenario)
-bng.start_scenario()
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind(("127.0.0.1", PORT))
+print(f"Ouvindo OutGauge em 127.0.0.1:{PORT} ... Ctrl+C para sair.")
 
-# Loop para imprimir a marcha atual
+def gear_to_str(g):
+    mapping = {0:"R", 1:"N", 2:"1", 3:"2", 4:"3", 5:"4", 6:"5", 7:"6", 8:"7", 9:"8"}
+    return mapping.get(g, str(g))
+
 try:
     while True:
-        state = vehicle.state
-        gear = state['gear']      # marcha atual
-        print(f"Marcha atual: {gear}")
-        time.sleep(0.2)           # atualiza a cada 0.2s
+        data, _ = sock.recvfrom(512)
+        if len(data) >= SIZE:
+            _, _, _, gear_char, _, _ = struct.unpack(FMT, data[:SIZE])
+            print(f"Marcha: {gear_to_str(gear_char)}")
 except KeyboardInterrupt:
-    print("\nEncerrado pelo usuário.")
+    pass
 finally:
-    bng.close()
+    sock.close()
