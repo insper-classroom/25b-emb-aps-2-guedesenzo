@@ -1,29 +1,31 @@
 ### Bem vindo ao nosso jogo!
 
 Teclas: 
+## 6 missil
+- Hazards (edge up = push h)
+- Hazards (edge down = push h)
 
-- Limpador : 
+- Farol (edge up = push n)
+- Farol (edge down = push nn)
 
-- Pisca Alerta :
+- Farol Alto (hold = J)
 
-- Farol : 
+- Ignicao (edge up = push 3)
+- Ignicao (edge down = push 0)
 
-- Farol Alto : 
+- two Step (edge up = push t)
+- two Step (edge down = push t)
 
-- Ignicao : 
+-Activate nitro (hold = b)
 
-- Arranque : 
+## 2 pushs
+- Reset (push = R)
 
-- Reset :
+- Horn (hold = K)
 
-- Launch/Pit limiter :
+## 2 encoders
+- esc/TC mode+ : (+ = CTRL+Q)
+- esc/TC mode+ : (- = CTRL+Q)
 
-- FFB + :
-
-- FFB - : 
-
-- Bias + : 
-
-- Bias - : 
-
-
+- Launch RPM - : (push -) 
+- Launch RPM + : (push +) 
