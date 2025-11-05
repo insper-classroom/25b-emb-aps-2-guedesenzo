@@ -6,10 +6,14 @@ endif()
 
 include(FreeRTOS_Kernel_import.cmake)
 
+
 # Example running FreeRTOS on 1 core
 add_executable(
     pico_emb
     main.c
+    ${CMAKE_SOURCE_DIR}/screen/tft.c
+    ${CMAKE_SOURCE_DIR}/screen/ili9341/ili9341.c
+    ${CMAKE_SOURCE_DIR}/screen/gfx/gfx.c
     )
 
 pico_generate_pio_header(pico_emb  ${CMAKE_SOURCE_DIR}/encoder/pico_emb.pio)
@@ -17,7 +21,9 @@ pico_generate_pio_header(pico_emb  ${CMAKE_SOURCE_DIR}/encoder/pico_emb.pio)
 target_include_directories(pico_emb PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_SOURCE_DIR}/encoder 
-
+    ${CMAKE_SOURCE_DIR}/screen
+    ${CMAKE_SOURCE_DIR}/screen/gfx
+    ${CMAKE_SOURCE_DIR}/screen/ili9341
     )
 
 # Linking to FreeRTOS-Kernel-Heap4 means we use a dynamic heap for allocations
@@ -26,6 +32,9 @@ target_link_libraries(pico_emb PRIVATE
     FreeRTOS-Kernel-Heap4
     pico_stdlib
     hardware_pio
+    hardware_spi  
+    hardware_dma
+   
 
     )
 # Set the nunber of cores to 1.
