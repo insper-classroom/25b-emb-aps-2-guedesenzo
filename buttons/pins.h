@@ -1,12 +1,23 @@
 #ifndef PINS_H
 #define PINS_H
 
-#define GPIO_BLUE_BUTTON 4
-#define GPIO_BLACK_BUTTON 5
+// botoes
+#define GPIO_BTN_RESET 4 
+#define GPIO_BTN_HORN 5 
+#define GPIO_BTN_HAZARDS 2 
+#define GPIO_BTN_FAROL 3 
+#define GPIO_BTN_FAROL_ALTO 6 
+#define GPIO_BTN_IGNICAO 7 
+#define GPIO_BTN_TWO_STEP 8
+#define GPIO_BTN_NITRO 9 
 
+// encoder
 #define QUADRATURE_A_PIN 10
 #define QUADRATURE_B_PIN 11
+#define QUADRATURE_C_PIN 12 
+#define QUADRATURE_D_PIN 13 
 
+// tela
 #define LCD_LITE_PIN  15
 #define LCD_RESET_PIN 16
 #define LCD_CS_PIN    17
