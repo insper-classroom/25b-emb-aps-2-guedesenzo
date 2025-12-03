@@ -17,6 +17,7 @@
 // definindo as variaveis globais:
 button_t button1, button2;
 volatile PIO encoderPIO = pio0;
+volatile uint32_t last_time = 0;
 
 //encoder
 volatile uint offsetA,offsetB, smA, smB, offsetC,offsetD, smC, smD; 
@@ -37,95 +38,50 @@ void get_encoder_counts(uint sm_a, uint sm_b, int32_t *count1, int32_t *count2) 
 
 
 void btn_callback(uint gpio, uint32_t events){
+
+    uint32_t current_time = to_us_since_boot(get_absolute_time());
+
+    // debounce de software: ignora eventos ocorridos em menos de 20ms (20000us)
+    if (current_time - last_time < 20000) {
+        return; 
+    }
+    last_time = current_time;
     
     button_t btn_msg;
     // na hora de testar, verificar se funciona mesmo sem definir o valor inicial do botao.
     
     // Fall Edge (Apertar o botão)
     if(events == 0x4){ 
+        btn_msg.val = 1;
         
-        if (gpio == GPIO_BTN_RESET){ // Key 1 (Push)
-            btn_msg.key = 1;
-            btn_msg.val = 1;
-            xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
-        }
-        else if(gpio == GPIO_BTN_HORN){ // Key 2 (Hold)
-            btn_msg.key = 2;
-            btn_msg.val = 1;
-            xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
-        }
-        else if(gpio == GPIO_BTN_HAZARDS){ // Key 4 (Hold)
-            btn_msg.key = 4;
-            btn_msg.val = 1;
-            xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
-        }
-        else if(gpio == GPIO_BTN_FAROL){ // Key 5 (Hold)
-            btn_msg.key = 5;
-            btn_msg.val = 1;
-            xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
-        }
-        else if(gpio == GPIO_BTN_FAROL_ALTO){ // Key 6 (Hold)
-            btn_msg.key = 6;
-            btn_msg.val = 1;
-            xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
-        }
-        else if(gpio == GPIO_BTN_IGNICAO){ // Key 7 (Hold)
-            btn_msg.key = 7;
-            btn_msg.val = 1;
-            xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
-        }
-        else if(gpio == GPIO_BTN_TWO_STEP){ // Key 8 (Hold)
-            btn_msg.key = 8;
-            btn_msg.val = 1;
-            xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
-        }
-        else if(gpio == GPIO_BTN_NITRO){ // Key 9 (Hold)
-            btn_msg.key = 9;
-            btn_msg.val = 1;
-            xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
-        }
+        if (gpio == GPIO_BTN_RESET)      btn_msg.key = 1;
+        else if (gpio == GPIO_BTN_HORN)       btn_msg.key = 2;
+        else if (gpio == GPIO_BTN_HAZARDS)    btn_msg.key = 4; // BOTAO COM PROBLEMA, NAO ENVIA ISSO CORRETAMENTE, JA TESTEI COM OUTROS BOTOES, EH ERRO FISICO!!!
+        else if (gpio == GPIO_BTN_FAROL)      btn_msg.key = 5;
+        else if (gpio == GPIO_BTN_FAROL_ALTO) btn_msg.key = 6; 
+        else if (gpio == GPIO_BTN_IGNICAO)    btn_msg.key = 7;  
+        else if (gpio == GPIO_BTN_TWO_STEP)   btn_msg.key = 8;
+        else if (gpio == GPIO_BTN_NITRO)      btn_msg.key = 9; 
+
+
+        xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
     }
     
     // Rise Edge (Soltar o botão)
     else if(events == 0x8){ 
-        
-        // Key 1 (Reset) não faz nada ao soltar
-        
-        if(gpio == GPIO_BTN_HORN){ // Key 2 (Hold)
-            btn_msg.key = 2;
-            btn_msg.val = 0;
-            xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
-        }
-        else if(gpio == GPIO_BTN_HAZARDS){ // Key 4 (Hold)
-            btn_msg.key = 4;
-            btn_msg.val = 0;
-            xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
-        }
-        else if(gpio == GPIO_BTN_FAROL){ // Key 5 (Hold)
-            btn_msg.key = 5;
-            btn_msg.val = 0;
-            xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
-        }
-        else if(gpio == GPIO_BTN_FAROL_ALTO){ // Key 6 (Hold)
-            btn_msg.key = 6;
-            btn_msg.val = 0;
-            xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
-        }
-        else if(gpio == GPIO_BTN_IGNICAO){ // Key 7 (Hold)
-            btn_msg.key = 7;
-            btn_msg.val = 0;
-            xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
-        }
-        else if(gpio == GPIO_BTN_TWO_STEP){ // Key 8 (Hold)
-            btn_msg.key = 8;
-            btn_msg.val = 0;
-            xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
-        }
-        else if(gpio == GPIO_BTN_NITRO){ // Key 9 (Hold)
-            btn_msg.key = 9;
-            btn_msg.val = 0;
-            xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
-        }
+        btn_msg.val = 0;
+
+        if (gpio == GPIO_BTN_HORN)            btn_msg.key = 2;
+        else if (gpio == GPIO_BTN_HAZARDS)    btn_msg.key = 4;
+        else if (gpio == GPIO_BTN_FAROL)      btn_msg.key = 5;
+        else if (gpio == GPIO_BTN_FAROL_ALTO) btn_msg.key = 6;
+        else if (gpio == GPIO_BTN_IGNICAO)    btn_msg.key = 7; 
+        else if (gpio == GPIO_BTN_TWO_STEP)   btn_msg.key = 8;
+        else if (gpio == GPIO_BTN_NITRO)      btn_msg.key = 9; 
+
+        xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
+
+
     }  
 }
 
@@ -202,6 +158,8 @@ void encoder_task(void *p){
         
         // encoder 1
         get_encoder_counts(smA, smB, &countA, &countB);
+        printf("countA:%d\n", countA);
+        printf("countB:%d\n", countB);
 
         int32_t current_position_1 = (countA + countB)/2;
         int32_t delta_1 = current_position_1 - last_position_1;
@@ -242,7 +200,7 @@ void uart_task(void *p){
     // printf("entrei uart");
     while(1){
 
-       if(xQueueReceive(XqueueCmd, &button, portMAX_DELAY)){
+       if(xQueueReceiveFromISR(XqueueCmd, &button, 0)){
             // printf("value: %d key:%d\n", button.val,button.key);
 
             // byte representando tecla
@@ -305,50 +263,21 @@ void display_task(void *p) {
 }
 
 
-void display_task_teste(void *p) {
-
-    tft_init();
-    char *marchas_teste[] = {"N", "1", "2", "3", "4", "5", "R"};
-    int marcha_atual_idx = 0;
-    int num_marchas = 7; 
-
-    while (1) {
-
-        const char *marcha_para_exibir = marchas_teste[marcha_atual_idx];
-
-        
-        tft_update_gear_string(marcha_para_exibir);
-
-        
-        GFX_flush();
-
-        
-        marcha_atual_idx = (marcha_atual_idx + 1) % num_marchas;
-
-        
-        vTaskDelay(pdMS_TO_TICKS(500)); 
-    }
-  
-}
-
-
 int main(void)
 {
     stdio_init_all();
     
-    // XqueueCmd = xQueueCreate(250, sizeof(button_t));
-    // xQueueDisplay = xQueueCreate(10, sizeof(char[4]));   
+    XqueueCmd = xQueueCreate(4, sizeof(button_t));
+    xQueueDisplay = xQueueCreate(10, sizeof(char[4]));   
     
     init_buttons();
-    // xTaskCreate(uart_task, "Task 1", 1024, NULL, 1, NULL);
-    // xTaskCreate(encoder_task, "Task 2", 1024, NULL, 1, NULL);
-    // xTaskCreate(display_task, "Task 3", 2048, NULL, 1, NULL);
-    xTaskCreate(display_task_teste, "Task_teste", 2048, NULL, 1, NULL);
+    xTaskCreate(uart_task, "Task 1", 1024, NULL, 1, NULL);
+    xTaskCreate(encoder_task, "Task 2", 1024, NULL, 1, NULL);
+    xTaskCreate(display_task, "Task 3", 2048, NULL, 1, NULL);
     
     vTaskStartScheduler();
 
     // Should never reach here
     for (;;);
 }
-
 
