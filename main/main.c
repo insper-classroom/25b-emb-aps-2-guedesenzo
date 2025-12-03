@@ -63,7 +63,6 @@ void btn_callback(uint gpio, uint32_t events){
         else if (gpio == GPIO_BTN_TWO_STEP)   btn_msg.key = 8;
         else if (gpio == GPIO_BTN_NITRO)      btn_msg.key = 9; 
 
-
         xQueueSendFromISR(XqueueCmd, &btn_msg, 0);
     }
     
@@ -158,8 +157,6 @@ void encoder_task(void *p){
         
         // encoder 1
         get_encoder_counts(smA, smB, &countA, &countB);
-        printf("countA:%d\n", countA);
-        printf("countB:%d\n", countB);
 
         int32_t current_position_1 = (countA + countB)/2;
         int32_t delta_1 = current_position_1 - last_position_1;
@@ -197,7 +194,6 @@ void uart_task(void *p){
     gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
     gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
 
-    // printf("entrei uart");
     while(1){
 
        if(xQueueReceiveFromISR(XqueueCmd, &button, 0)){
@@ -206,20 +202,18 @@ void uart_task(void *p){
             // byte representando tecla
             uart_putc_raw(uart0, button.key);
 
-            // // LSB
+            // LSB
             uart_putc_raw(uart0, button.val);
 
-            // // MSB
+            // MSB
             uart_putc_raw(uart0, button.val >> 8);
 
-            // // byte de sincronismo
+            // byte de sincronismo
             uart_putc_raw(uart0, 0xFF);
 
             // delay
             vTaskDelay(pdMS_TO_TICKS(100));
 
-            // stop byte
-            // uart_putc_raw(uart0, -1);
        }
 
        // para verificar se esta chegando dados da marcha
@@ -246,8 +240,6 @@ void uart_task(void *p){
         }
     }
 }
-
-
 
 void display_task(void *p) {
     tft_init();
@@ -277,7 +269,5 @@ int main(void)
     
     vTaskStartScheduler();
 
-    // Should never reach here
     for (;;);
 }
-

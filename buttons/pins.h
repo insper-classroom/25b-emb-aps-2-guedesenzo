@@ -5,7 +5,7 @@
 #define GPIO_BTN_RESET 4 
 #define GPIO_BTN_HORN 5 
 #define GPIO_BTN_HAZARDS 2 
-#define GPIO_BTN_FAROL 3 
+#define GPIO_BTN_FAROL 3
 #define GPIO_BTN_FAROL_ALTO 6 
 #define GPIO_BTN_IGNICAO 7 
 #define GPIO_BTN_TWO_STEP 8
