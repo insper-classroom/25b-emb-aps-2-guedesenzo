@@ -16,11 +16,11 @@ add_executable(
     ${CMAKE_SOURCE_DIR}/screen/gfx/gfx.c
     )
 
-pico_generate_pio_header(pico_emb  ${CMAKE_SOURCE_DIR}/encoder/pico_emb.pio)
+# pico_generate_pio_header(pico_emb  ${CMAKE_SOURCE_DIR}/encoder/pico_emb.pio)
 
 target_include_directories(pico_emb PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
-    ${CMAKE_SOURCE_DIR}/encoder 
+    ${CMAKE_SOURCE_DIR}/encoder/pico_emb.pio.c
     ${CMAKE_SOURCE_DIR}/screen
     ${CMAKE_SOURCE_DIR}/screen/gfx
     ${CMAKE_SOURCE_DIR}/screen/ili9341
