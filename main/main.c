@@ -17,10 +17,6 @@
 // definindo as variaveis globais:
 button_t button1, button2;
 volatile PIO encoderPIO = pio0;
-volatile uint32_t last_time = 0;
-
-//encoder
-volatile uint offsetA,offsetB, smA, smB, offsetC,offsetD, smC, smD; 
 
 /* Queues */    
 QueueHandle_t XqueueCmd, xQueueDisplay;
@@ -39,6 +35,7 @@ void get_encoder_counts(uint sm_a, uint sm_b, int32_t *count1, int32_t *count2) 
 
 void btn_callback(uint gpio, uint32_t events){
 
+    static uint32_t last_time = 0;
     uint32_t current_time = to_us_since_boot(get_absolute_time());
 
     // debounce de software: ignora eventos ocorridos em menos de 20ms (20000us)
@@ -126,7 +123,10 @@ void init_buttons(){
     gpio_set_dir(GPIO_BTN_NITRO, GPIO_IN);
     gpio_pull_up(GPIO_BTN_NITRO);
     gpio_set_irq_enabled(GPIO_BTN_NITRO, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_RISE, true);
+}
 
+void encoder_task(void *p){
+    uint offsetA, offsetB, smA, smB, offsetC, offsetD, smC, smD;
 
     // encoder 1
     offsetA = pio_add_program(encoderPIO, &quadratureA_program);
@@ -143,9 +143,7 @@ void init_buttons(){
     smD = pio_claim_unused_sm(encoderPIO, true);
     quadratureA_program_init(encoderPIO, smC, offsetC, QUADRATURE_C_PIN, QUADRATURE_D_PIN); 
     quadratureB_program_init(encoderPIO, smD, offsetD, QUADRATURE_C_PIN, QUADRATURE_D_PIN); 
-}
 
-void encoder_task(void *p){
     int32_t last_position_1 = 0;
     int32_t last_position_2 = 0;
     button_t encoder_msg;
@@ -183,7 +181,7 @@ void encoder_task(void *p){
         last_position_2 = current_position_2;
     }
 }
-// por hora incompleta
+
 void uart_task(void *p){
     button_t button;
     char rx_gear_string[4]; //buffer
@@ -196,7 +194,7 @@ void uart_task(void *p){
 
     while(1){
 
-       if(xQueueReceiveFromISR(XqueueCmd, &button, 0)){
+       if(xQueueReceive(XqueueCmd, &button, 0)){
             // printf("value: %d key:%d\n", button.val,button.key);
 
             // byte representando tecla
