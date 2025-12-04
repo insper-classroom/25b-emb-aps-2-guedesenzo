@@ -11,6 +11,7 @@ include(FreeRTOS_Kernel_import.cmake)
 add_executable(
     pico_emb
     main.c
+    ${CMAKE_SOURCE_DIR}/encoder/pico_emb.pio.c
     ${CMAKE_SOURCE_DIR}/screen/tft.c
     ${CMAKE_SOURCE_DIR}/screen/ili9341/ili9341.c
     ${CMAKE_SOURCE_DIR}/screen/gfx/gfx.c
@@ -20,7 +21,7 @@ add_executable(
 
 target_include_directories(pico_emb PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
-    ${CMAKE_SOURCE_DIR}/encoder/pico_emb.pio.c
+    ${CMAKE_SOURCE_DIR}/encoder
     ${CMAKE_SOURCE_DIR}/screen
     ${CMAKE_SOURCE_DIR}/screen/gfx
     ${CMAKE_SOURCE_DIR}/screen/ili9341
