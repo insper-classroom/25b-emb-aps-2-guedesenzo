@@ -45,7 +45,7 @@ void btn_callback(uint gpio, uint32_t events){
     last_time = current_time;
     
     button_t btn_msg;
-    // na hora de testar, verificar se funciona mesmo sem definir o valor inicial do botao.
+    
     
     // Fall Edge (Apertar o botão)
     if(events == 0x4){ 
@@ -53,7 +53,7 @@ void btn_callback(uint gpio, uint32_t events){
         
         if (gpio == GPIO_BTN_RESET)      btn_msg.key = 1;
         else if (gpio == GPIO_BTN_HORN)       btn_msg.key = 2;
-        else if (gpio == GPIO_BTN_HAZARDS)    btn_msg.key = 4; // BOTAO COM PROBLEMA, NAO ENVIA ISSO CORRETAMENTE, JA TESTEI COM OUTROS BOTOES, EH ERRO FISICO!!!
+        else if (gpio == GPIO_BTN_HAZARDS)    btn_msg.key = 4; 
         else if (gpio == GPIO_BTN_FAROL)      btn_msg.key = 5;
         else if (gpio == GPIO_BTN_FAROL_ALTO) btn_msg.key = 6; 
         else if (gpio == GPIO_BTN_IGNICAO)    btn_msg.key = 7;  
