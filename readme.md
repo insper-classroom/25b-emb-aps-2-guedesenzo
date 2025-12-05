@@ -29,3 +29,8 @@ Teclas:
 
 - Launch RPM - : (push -) 
 - Launch RPM + : (push +) 
+
+
+## Diagrama de blocos do projeto
+
+<img width="4276" height="1965" alt="aps2emb (1)" src="https://github.com/user-attachments/assets/7e3fee28-929b-401a-b406-35bd2432d142" />
